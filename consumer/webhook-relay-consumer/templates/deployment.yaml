@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "webhook-relay-consumer.fullname" . }}
+  labels:
+    {{- include "webhook-relay-consumer.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "webhook-relay-consumer.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "webhook-relay-consumer.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "webhook-relay-consumer.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          env:
+            - name: JENKINS_URL
+              value: {{ .Values.receiver.jenkinsUrl }}
+            - name: SQS_QUEUE_URL
+              value: {{ .Values.receiver.sqsQueueUrl }}
+            - name: SQS_REGION
+              value: {{ .Values.receiver.sqsRegion }}
+          
