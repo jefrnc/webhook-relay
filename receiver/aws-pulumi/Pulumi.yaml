@@ -1,0 +1,6 @@
+name: webhook-receiver
+description: Add receiver por Jenkins on EKS
+runtime:
+    name: python
+    options:
+        virtualenv: venv

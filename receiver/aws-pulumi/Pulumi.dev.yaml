@@ -1,0 +1,5 @@
+encryptionsalt: v1:DtV98in27dM=:v1:CMPtlK6yjQ2o8Oak:1w4o7uwoF52XvKkiUo9C0s3XUPOFUw==
+config:
+  aws:profile: shared-services
+  aws:region: us-east-1
+  webhook-receiver:github_secret: EXAMPLE_TOKEN
