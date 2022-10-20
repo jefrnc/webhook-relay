@@ -13,6 +13,7 @@ custom:
 
 plugins:
   - serverless-plugin-export-endpoints
+
 functions:
   handler:
     handler: lambda/receiver.handler
@@ -50,7 +51,3 @@ resources:
       Type: "AWS::SQS::Queue"
       Properties:
         QueueName: ${self:custom.queueName}
-
-  Outputs:
-    CustomServiceEndpoint:
-      Value: "https://${self:custom.myDomain}"
