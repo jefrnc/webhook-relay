@@ -2,7 +2,7 @@
 replicaCount: 1
 image:
   repository: jsfrnc/webhook-relay-consumer
-  tag: "v1.0.2"
+  tag: "v1.0.3"
 
 serviceAccount:
   create: true
@@ -15,8 +15,6 @@ receiver:
   jenkinsUrl: ""
   sqsQueueUrl: ""
   sqsRegion: ""
-
-
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

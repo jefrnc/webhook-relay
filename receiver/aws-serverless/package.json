@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "serverless-plugin-export-endpoints": "^0.1.3"
+  }
+}

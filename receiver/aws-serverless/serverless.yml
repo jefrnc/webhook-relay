@@ -1,0 +1,56 @@
+service: webhook-receiver
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: dev
+  region: us-west-2
+
+custom:
+  queueName: webhook-relay-receiver-sqs
+  githubSecret: EXAMPLE_TOKEN
+
+plugins:
+  - serverless-plugin-export-endpoints
+functions:
+  handler:
+    handler: lambda/receiver.handler
+    timeout: 30
+    environment:
+      SQS_QUEUE: ${self:custom.queueName}-${sls:stage}
+      GITHUB_SECRET:  ${self:custom.githubSecret}
+      SQS_REGION: ${self:provider.region}
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "sqs:DeleteMessage"
+          - "sqs:GetQueueUrl"
+          - "sqs:ReceiveMessage"
+        Resource:
+          - "arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:webhook-relay-receiver-sqs-${sls:stage}"
+    events:
+      - http:
+          path: /
+          method: any
+          cors: true
+      - http:
+          path: /{any+}
+          method: any
+          cors: true
+      # - httpApi:
+      #     path: /
+      #     method: post
+      #   cors:
+      #     origin: '*'
+
+resources:
+  Resources:
+    SQSQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: ${self:custom.queueName}
+
+  Outputs:
+    CustomServiceEndpoint:
+      Value: "https://${self:custom.myDomain}"

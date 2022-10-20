@@ -1,5 +1,5 @@
 encryptionsalt: v1:iQLSPIAA79I=:v1:47mn9H9ydvcdTdjp:NIjIAZmQdBhf7gvo9GM6/fioNwQudg==
 config:
-  aws:profile: frubana-main
+  aws:profile: devops
   aws:region: us-west-2
   webhook-receiver:github_secret: EXAMPLE_TOKEN
