@@ -31,24 +31,33 @@ while True:
         original_headers = parsed['headers']
         payload = parsed['payload']
 
-        # Set up our headers.
-        headers = {}
-        headers['Content-Type'] = "application/json"
-        headers['X-Github-Event'] = original_headers['X-Github-Event']
+        print("Sending to Jenkins...")
+        print("Headers:")
+        print(original_headers)
+        print("Payload:")
+        print(payload)
+        
+        try: 
+            # Set up our headers.
+            headers = {}
+            headers['Content-Type'] = "application/json"
+            headers['X-Github-Event'] = original_headers['X-Github-Event']
 
-        # Post the message to jenkins.
-        resp = requests.post(
-            JENKINS_URL,
-            headers=headers,
-            data=json.dumps(payload),
-            verify=False
-        )
-        print(resp.text)
+            # Post the message to jenkins.
+            resp = requests.post(
+                JENKINS_URL,
+                headers=headers,
+                data=json.dumps(payload),
+                verify=False
+            )
+            print(resp.text)
 
-        # Delete the message if we made it this far.
-        sqs.delete_message(
-            QueueUrl=SQS_QUEUE_URL,
-            ReceiptHandle=message['ReceiptHandle']
-        )
+            # Delete the message if we made it this far.
+            sqs.delete_message(
+                QueueUrl=SQS_QUEUE_URL,
+                ReceiptHandle=message['ReceiptHandle']
+            )
+        except Exception as e:
+            print(f"Error: {e}")
 
     time.sleep(5)
