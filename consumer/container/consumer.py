@@ -3,6 +3,7 @@ import datetime
 import json
 import os
 import time
+from turtle import end_fill
 
 import boto3
 import requests
@@ -26,31 +27,36 @@ while True:
         continue
 
     for message in message_list["Messages"]:
-        print(f"Got message: {message['MessageId']} at {datetime.datetime.now().isoformat()}")
+        print(
+            f"Got message: {message['MessageId']} at {datetime.datetime.now().isoformat()}")
         parsed = json.loads(message["Body"])
         original_headers = parsed['headers']
         payload = parsed['payload']
 
         print("Sending to Jenkins...")
-        print("Headers:")
-        print(original_headers)
-        print("Payload:")
-        print(payload)
-        
-        try: 
+        try:
             # Set up our headers.
             headers = {}
             headers['Content-Type'] = "application/json"
-            headers['X-Github-Event'] = original_headers['X-Github-Event']
+            # Ignore message if X-GitHub-Event is not present
+            if 'X-GitHub-Event' in original_headers:
+                headers['X-Github-Event'] = original_headers['X-Github-Event']
 
-            # Post the message to jenkins.
-            resp = requests.post(
-                JENKINS_URL,
-                headers=headers,
-                data=json.dumps(payload),
-                verify=False
-            )
-            print(resp.text)
+                # Post the message to jenkins.
+                resp = requests.post(
+                    JENKINS_URL,
+                    headers=headers,
+                    data=json.dumps(payload),
+                    verify=False
+                )
+                print(resp.text)
+            else:
+                print("--")
+                print("No X-GitHub-Event header found, ignoring message.")
+                print(original_headers)
+                print(payload)
+                print("--")
+            
 
             # Delete the message if we made it this far.
             sqs.delete_message(
