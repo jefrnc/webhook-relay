@@ -3,7 +3,6 @@ import datetime
 import json
 import os
 import time
-from turtle import end_fill
 
 import boto3
 import requests
@@ -34,29 +33,25 @@ while True:
         payload = parsed['payload']
 
         print("Sending to Jenkins...")
+        print("Headers:")
+        print(original_headers)
+        print("Payload:")
+        print(payload)
+
         try:
             # Set up our headers.
-            headers = {}
-            headers['Content-Type'] = "application/json"
-            # Ignore message if X-GitHub-Event is not present
-            if 'X-GitHub-Event' in original_headers:
-                headers['X-Github-Event'] = original_headers['X-Github-Event']
+            headers = original_headers
+            #headers['Content-Type'] = "application/json"
+            #headers['X-Github-Event'] = original_headers['X-Github-Event']
 
-                # Post the message to jenkins.
-                resp = requests.post(
-                    JENKINS_URL,
-                    headers=headers,
-                    data=json.dumps(payload),
-                    verify=False
-                )
-                print(resp.text)
-            else:
-                print("--")
-                print("No X-GitHub-Event header found, ignoring message.")
-                print(original_headers)
-                print(payload)
-                print("--")
-            
+            # Post the message to jenkins.
+            resp = requests.post(
+                JENKINS_URL,
+                headers=headers,
+                data=json.dumps(payload),
+                verify=False
+            )
+            print(resp.text)
 
             # Delete the message if we made it this far.
             sqs.delete_message(
@@ -64,6 +59,6 @@ while True:
                 ReceiptHandle=message['ReceiptHandle']
             )
         except Exception as e:
-            print(f"Error: {e}")
+            print(e)
 
     time.sleep(5)
