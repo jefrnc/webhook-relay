@@ -10,9 +10,15 @@ provider:
 custom:
   queueName: webhook-relay-receiver-sqs
   githubSecret: EXAMPLE_TOKEN
+  customDomain:
+    domainName: webhook-relay.jenkins.xxxx.com
+    basePath: ''
+    stage: ${self:provider.stage}
+    createRoute53Record: true  
 
 plugins:
   - serverless-plugin-export-endpoints
+  - serverless-domain-manager
 
 functions:
   handler:

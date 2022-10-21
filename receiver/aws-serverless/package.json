@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "serverless-domain-manager": "^6.1.0",
     "serverless-plugin-export-endpoints": "^0.1.3"
   }
 }
